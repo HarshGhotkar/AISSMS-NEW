@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth, StudentSignUpData, TeacherSignUpData } from '../contexts/AuthContext'
+import { useAuth,type StudentSignUpData, type TeacherSignUpData } from '../contexts/AuthContext'
 
 const SKILL_OPTIONS = [
   'Python', 'JavaScript', 'React', 'Node.js', 'Java', 'C++', 'SQL', 'Data Structures',

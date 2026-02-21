@@ -4,7 +4,7 @@ import {
   useState,
   useEffect,
   useCallback,
-  ReactNode,
+  type ReactNode,
 } from 'react'
 
 export type UserRole = 'student' | 'teacher'
@@ -22,7 +22,7 @@ export type AuthState = {
 }
 
 type AuthContextType = AuthState & {
-  signIn: (email: string, password: string) => Promise<{ role: UserRole; swot_complete: boolean }>
+  signIn: (email: string, password: string) => Promise<void>
   signUpStudent: (data: StudentSignUpData) => Promise<void>
   signUpTeacher: (data: TeacherSignUpData) => Promise<void>
   signOut: () => void
@@ -120,15 +120,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data = await res.json()
     if (!res.ok) throw new Error(data.detail ?? 'Sign in failed')
     localStorage.setItem('token', data.access_token)
-    const userData = {
-      id: data.user_id,
-      email,
-      role: data.role,
-      profile_complete: data.profile_complete ?? false,
-      swot_complete: data.swot_complete ?? false,
-    }
-    setState({ user: userData, token: data.access_token, loading: false })
-    return { role: data.role, swot_complete: data.swot_complete ?? false }
+    setState({
+      user: {
+        id: data.user_id,
+        email,
+        role: data.role,
+        profile_complete: data.profile_complete ?? false,
+        swot_complete: data.swot_complete ?? false,
+      },
+      token: data.access_token,
+      loading: false,
+    })
   }
 
   const signUpStudent = async (payload: StudentSignUpData) => {
@@ -168,7 +170,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: payload.email,
         role: 'teacher',
         profile_complete: true,
-        swot_complete: true,
       },
       token: data.access_token,
       loading: false,
